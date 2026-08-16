@@ -1,6 +1,7 @@
 import java.math.BigDecimal;
 
 public class Main {
+
     public static void main(String[] args) {
         System.out.println("Bienvenue dans votre système bancaire !");
 
@@ -53,12 +54,14 @@ public class Main {
         banque.ajouterCompte(epargneMathieu);
         banque.ajouterCompte(comptePaul);
 
-        compteMathieu.afficherCompte();
-        comptePaul.afficherCompte();
+        ConsoleBancaire console = new ConsoleBancaire(banque);
+
+        console.afficherCompte("FR 1234 5678 9101 12");
+        console.afficherCompte("FR 9876 5432 1098 76");
 
         System.out.println("\n--- VIREMENT ---");
 
-        banque.effectuerVirement(
+        console.effectuerVirement(
                 "FR 1234 5678 9101 12",
                 "FR 9876 5432 1098 76",
                 new BigDecimal("200.00")
@@ -72,13 +75,13 @@ public class Main {
         System.out.println("\n--- TEST COMPTE INCONNU ---");
 
         try {
-            banque.effectuerVirement(
+            console.effectuerVirement(
                     "FR 1111 1111 1111 11",
                     "FR 9876 5432 1098 76",
                     new BigDecimal("50.00")
             );
         } catch (CompteIntrouvableException e) {
-            System.out.println("ERREUR BANCAIRE : " + e.getMessage());
+            console.afficherErreur(e.getMessage());
         }
 
         try {
@@ -87,12 +90,12 @@ public class Main {
                     new BigDecimal("-100.00")
             );
         } catch (MontantInvalideException e) {
-            System.out.println("ERREUR : " + e.getMessage());
+            console.afficherErreur(e.getMessage());
         }
 
         System.out.println("\n--- TRANSFERT VERS ÉPARGNE ---");
 
-        banque.effectuerVirement(
+        console.effectuerVirement(
                 "FR 1234 5678 9101 12",
                 "FR 5555 5555 5555 55",
                 new BigDecimal("300.00")
@@ -100,12 +103,12 @@ public class Main {
 
         System.out.println("\n--- APRES LES OPERATIONS ---");
 
-        compteMathieu.afficherCompte();
-        epargneMathieu.afficherCompte();
-        comptePaul.afficherCompte();
+        console.afficherCompte("FR 1234 5678 9101 12");
+        console.afficherCompte("FR 5555 5555 5555 55");
+        console.afficherCompte("FR 9876 5432 1098 76");
 
-        banque.afficherHistorique("FR 1234 5678 9101 12");
-        banque.afficherHistorique("FR 5555 5555 5555 55");
-        banque.afficherHistorique("FR 9876 5432 1098 76");
+        console.afficherHistorique("FR 1234 5678 9101 12");
+        console.afficherHistorique("FR 5555 5555 5555 55");
+        console.afficherHistorique("FR 9876 5432 1098 76");
     }
 }
