@@ -27,6 +27,26 @@ public class Transaction {
         this.date = LocalDateTime.now();
     }
 
+    public Compte getSource() {
+        return source;
+    }
+
+    public Compte getDestinataire() {
+        return destinataire;
+    }
+
+    public BigDecimal getMontant() {
+        return montant;
+    }
+
+    public TypeTransaction getType() {
+        return type;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
     public void afficher() {
         System.out.println("----- TRANSACTION -----");
         System.out.println("ID : TX-" + String.format("%06d", id));
