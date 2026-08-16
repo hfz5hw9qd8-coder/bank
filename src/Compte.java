@@ -21,7 +21,6 @@ public class Compte {
         return solde;
     }
 
-
     public Compte(String numeroCompte, Client titulaire, BigDecimal soldeInitial) {
         this.numeroCompte = numeroCompte;
         this.titulaire = titulaire;
@@ -36,7 +35,6 @@ public class Compte {
     }
 
     public void deposer(BigDecimal montant) {
-
         if (montant.compareTo(BigDecimal.ZERO) <= 0) {
             throw new MontantInvalideException(
                     "Le montant du dépôt doit être supérieur à 0."
@@ -48,8 +46,8 @@ public class Compte {
         Transaction transaction = new Transaction(
                 montant,
                 TypeTransaction.DEPOT,
-                "BANQUE",
-                titulaire.getNom()
+                null,
+                this
         );
 
         historique.add(transaction);
@@ -58,7 +56,6 @@ public class Compte {
     }
 
     public void retirer(BigDecimal montant) {
-
         if (montant.compareTo(BigDecimal.ZERO) <= 0) {
             throw new MontantInvalideException(
                     "Le montant du retrait doit être supérieur à 0."
@@ -75,8 +72,8 @@ public class Compte {
         Transaction transaction = new Transaction(
                 montant,
                 TypeTransaction.RETRAIT,
-                titulaire.getNom(),
-                "BANQUE"
+                this,
+                null
         );
 
         historique.add(transaction);
@@ -85,7 +82,6 @@ public class Compte {
     }
 
     public void virerVers(Compte destinataire, BigDecimal montant) {
-
         if (montant.compareTo(BigDecimal.ZERO) <= 0) {
             throw new MontantInvalideException(
                     "Le montant du virement doit être supérieur à 0."
@@ -103,8 +99,8 @@ public class Compte {
         Transaction transaction = new Transaction(
                 montant,
                 TypeTransaction.VIREMENT,
-                this.titulaire.getNom(),
-                destinataire.titulaire.getNom()
+                this,
+                destinataire
         );
 
         historique.add(transaction);
@@ -114,6 +110,7 @@ public class Compte {
         System.out.println("De : " + this.titulaire.getNom());
         System.out.println("Vers : " + destinataire.titulaire.getNom());
     }
+
     public void afficherHistorique() {
         System.out.println(
                 "\n===== HISTORIQUE DE " + titulaire.getNom() + " ====="
