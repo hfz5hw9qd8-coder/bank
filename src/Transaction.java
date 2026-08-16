@@ -32,8 +32,25 @@ public class Transaction {
         System.out.println("ID : TX-" + String.format("%06d", id));
         System.out.println("Type : " + type);
         System.out.println("Montant : " + montant + " €");
-        System.out.println("Source : " + source.getNumeroCompte() + " (" + source.getTitulaire() + ")");
-        System.out.println("Destinataire : " + destinataire.getNumeroCompte() + " (" + destinataire.getTitulaire() + ")");
+
+        if (source == null) {
+            System.out.println("Source : BANQUE");
+        } else {
+            System.out.println(
+                    "Source : " + source.getNumeroCompte()
+                            + " (" + source.getTitulaire() + ")"
+            );
+        }
+
+        if (destinataire == null) {
+            System.out.println("Destinataire : BANQUE");
+        } else {
+            System.out.println(
+                    "Destinataire : " + destinataire.getNumeroCompte()
+                            + " (" + destinataire.getTitulaire() + ")"
+            );
+        }
+
         System.out.println("Date : " + date);
         System.out.println("-----------------------");
     }
