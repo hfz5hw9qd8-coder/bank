@@ -1,26 +1,25 @@
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 public class Transaction {
 
-    private BigDecimal montant;
-    private TypeTransaction type;
-    private String source;
-    private String destinataire;
-    private LocalDateTime date;
+    private final BigDecimal montant;
+    private final TypeTransaction type;
+    private final Compte source;
+    private final Compte destinataire;
+    private final LocalDateTime date;
 
     private static int compteur = 1;
 
-    private int id;
+    private final int id;
 
     public Transaction(
             BigDecimal montant,
             TypeTransaction type,
-            String source,
-            String destinataire
+            Compte source,
+            Compte destinataire
     ) {
-        this.id = compteur ++;
+        this.id = compteur++;
         this.montant = montant;
         this.type = type;
         this.source = source;
@@ -33,8 +32,8 @@ public class Transaction {
         System.out.println("ID : TX-" + String.format("%06d", id));
         System.out.println("Type : " + type);
         System.out.println("Montant : " + montant + " €");
-        System.out.println("Source : " + source);
-        System.out.println("Destinataire : " + destinataire);
+        System.out.println("Source : " + source.getNumeroCompte() + " (" + source.getTitulaire() + ")");
+        System.out.println("Destinataire : " + destinataire.getNumeroCompte() + " (" + destinataire.getTitulaire() + ")");
         System.out.println("Date : " + date);
         System.out.println("-----------------------");
     }
