@@ -1,13 +1,16 @@
-import java.util.ArrayList;
-import java.util.List;
 import java.math.BigDecimal;
 
 public class Compte {
-    private List<Transaction> historique = new ArrayList<>();
 
-    private String numeroCompte;
-    private Client titulaire;
+    private final String numeroCompte;
+    private final Client titulaire;
     private BigDecimal solde;
+
+    public Compte(String numeroCompte, Client titulaire, BigDecimal soldeInitial) {
+        this.numeroCompte = numeroCompte;
+        this.titulaire = titulaire;
+        this.solde = soldeInitial;
+    }
 
     public String getNumeroCompte() {
         return numeroCompte;
@@ -21,12 +24,6 @@ public class Compte {
         return solde;
     }
 
-    public Compte(String numeroCompte, Client titulaire, BigDecimal soldeInitial) {
-        this.numeroCompte = numeroCompte;
-        this.titulaire = titulaire;
-        this.solde = soldeInitial;
-    }
-
     public void afficherCompte() {
         System.out.println("------ COMPTE BANCAIRE -----");
         System.out.println("Numéro : " + numeroCompte);
@@ -34,7 +31,7 @@ public class Compte {
         System.out.println("Solde : " + solde + "€");
     }
 
-    public void deposer(BigDecimal montant) {
+    public Transaction deposer(BigDecimal montant) {
         if (montant.compareTo(BigDecimal.ZERO) <= 0) {
             throw new MontantInvalideException(
                     "Le montant du dépôt doit être supérieur à 0."
@@ -43,19 +40,15 @@ public class Compte {
 
         solde = solde.add(montant);
 
-        Transaction transaction = new Transaction(
+        return new Transaction(
                 montant,
                 TypeTransaction.DEPOT,
                 null,
                 this
         );
-
-        historique.add(transaction);
-
-        System.out.println("Dépôt effectué : " + montant + " €");
     }
 
-    public void retirer(BigDecimal montant) {
+    public Transaction retirer(BigDecimal montant) {
         if (montant.compareTo(BigDecimal.ZERO) <= 0) {
             throw new MontantInvalideException(
                     "Le montant du retrait doit être supérieur à 0."
@@ -64,24 +57,20 @@ public class Compte {
 
         if (montant.compareTo(solde) > 0) {
             System.out.println("Solde insuffisant !");
-            return;
+            return null;
         }
 
         solde = solde.subtract(montant);
 
-        Transaction transaction = new Transaction(
+        return new Transaction(
                 montant,
                 TypeTransaction.RETRAIT,
                 this,
                 null
         );
-
-        historique.add(transaction);
-
-        System.out.println("Retrait effectué : " + montant + " €");
     }
 
-    public void virerVers(Compte destinataire, BigDecimal montant) {
+    public Transaction virerVers(Compte destinataire, BigDecimal montant) {
         if (montant.compareTo(BigDecimal.ZERO) <= 0) {
             throw new MontantInvalideException(
                     "Le montant du virement doit être supérieur à 0."
@@ -90,36 +79,17 @@ public class Compte {
 
         if (montant.compareTo(solde) > 0) {
             System.out.println("Virement refusé : solde insuffisant !");
-            return;
+            return null;
         }
 
-        this.solde = this.solde.subtract(montant);
+        solde = solde.subtract(montant);
         destinataire.solde = destinataire.solde.add(montant);
 
-        Transaction transaction = new Transaction(
+        return new Transaction(
                 montant,
                 TypeTransaction.VIREMENT,
                 this,
                 destinataire
         );
-
-        historique.add(transaction);
-        destinataire.historique.add(transaction);
-
-        System.out.println("Virement effectué : " + montant + " €");
-        System.out.println("De : " + this.titulaire.getNom());
-        System.out.println("Vers : " + destinataire.titulaire.getNom());
-    }
-
-    public void afficherHistorique() {
-        System.out.println(
-                "\n===== HISTORIQUE DE " + titulaire.getNom() + " ====="
-        );
-
-        for (Transaction transaction : historique) {
-            transaction.afficher();
-        }
-
-        System.out.println("=================================");
     }
 }
