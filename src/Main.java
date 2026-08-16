@@ -1,7 +1,7 @@
 import java.math.BigDecimal;
 
 public class Main {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         System.out.println("Bienvenue dans votre système bancaire !");
 
         Client mathieu = new Client(
@@ -19,92 +19,93 @@ public class Main {
         mathieu.afficherClient();
         paul.afficherClient();
 
-        Compte compteMathieu= new Compte(
+        Compte compteMathieu = new Compte(
                 "FR 1234 5678 9101 12",
                 mathieu,
                 new BigDecimal("1000.00")
         );
 
-        mathieu.ajouterCompte(compteMathieu);
         Compte epargneMathieu = new Compte(
                 "FR 5555 5555 5555 55",
                 mathieu,
                 new BigDecimal("5000.00")
         );
-        mathieu.ajouterCompte(epargneMathieu);
 
-        Compte comptePaul= new Compte(
+        Compte comptePaul = new Compte(
                 "FR 9876 5432 1098 76",
                 paul,
                 new BigDecimal("500.00")
         );
 
+        mathieu.ajouterCompte(compteMathieu);
+        mathieu.ajouterCompte(epargneMathieu);
+        paul.ajouterCompte(comptePaul);
+
         CompteRepository compteRepository = new CompteRepository();
+        TransactionRepository transactionRepository = new TransactionRepository();
 
         ServiceBancaire banque = new ServiceBancaire(
-                compteRepository
+                compteRepository,
+                transactionRepository
         );
 
         banque.ajouterCompte(compteMathieu);
+        banque.ajouterCompte(epargneMathieu);
         banque.ajouterCompte(comptePaul);
 
         compteMathieu.afficherCompte();
         comptePaul.afficherCompte();
 
-        System.out.println("\n --- VIREMENT ---");
+        System.out.println("\n--- VIREMENT ---");
 
         banque.effectuerVirement(
                 "FR 1234 5678 9101 12",
                 "FR 9876 5432 1098 76",
-                new BigDecimal("200")
+                new BigDecimal("200.00")
         );
-        compteMathieu.retirer(new BigDecimal("5000"));
+
+        banque.retirer(
+                "FR 1234 5678 9101 12",
+                new BigDecimal("5000.00")
+        );
 
         System.out.println("\n--- TEST COMPTE INCONNU ---");
-        System.out.println("\n--- TRANSFERT VERS ÉPARGNE ---");
 
-        compteMathieu.virerVers(
-                epargneMathieu,
-                new BigDecimal("300.00")
-        );
-
-        compteMathieu.afficherCompte();
-        epargneMathieu.afficherCompte();
         try {
-
             banque.effectuerVirement(
                     "FR 1111 1111 1111 11",
                     "FR 9876 5432 1098 76",
-                    new BigDecimal("50")
+                    new BigDecimal("50.00")
             );
-
         } catch (CompteIntrouvableException e) {
-
-            System.out.println(
-                    "ERREUR BANCAIRE : " + e.getMessage()
-            );
+            System.out.println("ERREUR BANCAIRE : " + e.getMessage());
         }
 
         try {
-
-            compteMathieu.retirer(new BigDecimal("-100"));
-
+            banque.retirer(
+                    "FR 1234 5678 9101 12",
+                    new BigDecimal("-100.00")
+            );
         } catch (MontantInvalideException e) {
-
             System.out.println("ERREUR : " + e.getMessage());
         }
 
+        System.out.println("\n--- TRANSFERT VERS ÉPARGNE ---");
 
-        System.out.println("\n--- APRES LE VIREMENT ---");
+        banque.effectuerVirement(
+                "FR 1234 5678 9101 12",
+                "FR 5555 5555 5555 55",
+                new BigDecimal("300.00")
+        );
 
-
+        System.out.println("\n--- APRES LES OPERATIONS ---");
 
         compteMathieu.afficherCompte();
+        epargneMathieu.afficherCompte();
         comptePaul.afficherCompte();
 
-        compteMathieu.afficherHistorique();
-        comptePaul.afficherHistorique();
-
-
+        banque.afficherHistorique("FR 1234 5678 9101 12");
+        banque.afficherHistorique("FR 5555 5555 5555 55");
+        banque.afficherHistorique("FR 9876 5432 1098 76");
     }
 }
