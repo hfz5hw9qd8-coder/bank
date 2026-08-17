@@ -1,7 +1,7 @@
 package com.bank.controller;
 
-import com.bank.Compte;
-import com.bank.ServiceBancaire;
+import com.bank.model.Compte;
+import com.bank.service.ServiceBancaire;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,13 +19,13 @@ public class CompteController {
     }
 
     @GetMapping("/{numeroCompte}")
-    public ResponseEntity<Compte> rechercherCompte(@PathVariable String numeroCompte) {
+    public ResponseEntity<CompteResponse> rechercherCompte(@PathVariable String numeroCompte) {
         Compte compte = serviceBancaire.rechercherCompte(numeroCompte);
 
         if (compte == null) {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(compte);
+        return ResponseEntity.ok(CompteResponse.from(compte));
     }
 }
