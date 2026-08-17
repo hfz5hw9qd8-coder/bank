@@ -20,26 +20,49 @@ public class ServiceBancaire {
         this.transactionRepository = transactionRepository;
     }
 
-    public void ajouterCompte(Compte compte) { compteRepository.sauvegarder(compte); }
+    public void ajouterCompte(Compte compte) {
+        compteRepository.sauvegarder(compte);
+    }
 
     public Compte rechercherCompte(String numeroCompte) {
         return compteRepository.rechercherParNumero(numeroCompte);
     }
 
     public List<Transaction> historique(String numeroCompte) {
-        return transactionRepository.trouverParCompte(rechercherCompteOuErreur(numeroCompte));
+        return transactionRepository.trouverParCompte(
+                rechercherCompteOuErreur(numeroCompte)
+        );
     }
 
-    public void effectuerVirement(String numeroSource, String numeroDestinataire, BigDecimal montant) {
+    public Transaction effectuerVirement(
+            String numeroSource,
+            String numeroDestinataire,
+            BigDecimal montant
+    ) {
         Compte source = rechercherCompteOuErreur(numeroSource);
         Compte destinataire = rechercherCompteOuErreur(numeroDestinataire);
-        Transaction transaction = source.virerVers(destinataire, montant);
-        if (transaction != null) transactionRepository.sauvegarder(transaction);
+
+        Transaction transaction = source.virerVers(
+                destinataire,
+                montant
+        );
+
+        if (transaction != null) {
+            transactionRepository.sauvegarder(transaction);
+        }
+
+        return transaction;
     }
 
     private Compte rechercherCompteOuErreur(String numeroCompte) {
         Compte compte = rechercherCompte(numeroCompte);
-        if (compte == null) throw new CompteIntrouvableException("Compte introuvable : " + numeroCompte);
+
+        if (compte == null) {
+            throw new CompteIntrouvableException(
+                    "Compte introuvable : " + numeroCompte
+            );
+        }
+
         return compte;
     }
 }
